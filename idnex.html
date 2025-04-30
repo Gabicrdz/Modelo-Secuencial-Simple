@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TensorFlow</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <h1>TensorFlow.js Example</h1>
+    
+    <div class="formula">Formula: y = 2x + 6</div>
+    
+    <button id="train-btn">Entrenar Modelo</button>
+    <input type="text" id="x-input" placeholder="Valor X" value="4">
+    <button id="predict-btn">Predecir</button>
+    
+    <div id="result"></div>
+
+    <script>
+        let model;
+        let modeloEntrenado = false;
+        
+        async function entrenarModelo() {
+            model = tf.sequential();
+            model.add(tf.layers.dense({units: 1, inputShape: [1]}));
+            
+            model.compile({
+                loss: 'meanSquaredError',
+                optimizer: 'sgd'
+            });
+            
+            const xValues = [];
+            const yValues = [];
+            
+            for (let i = 0; i < 9; i++) {
+                const x = -6 + i;
+                const y = 2 * x + 6;  // Fórmula y = 2x + 6
+                xValues.push(x);
+                yValues.push(y);
+            }
+            
+            const xs = tf.tensor2d(xValues, [9, 1]);
+            const ys = tf.tensor2d(yValues, [9, 1]);
+            
+            const totalEpochs = 350;
+            
+            await model.fit(xs, ys, {
+                epochs: totalEpochs
+            });
+            
+            modeloEntrenado = true;
+            predecir();
+        }
+        
+        function predecir() {
+            if (!modeloEntrenado) {
+                document.getElementById('result').innerText = "Por favor, entrena el modelo primero.";
+                return;
+            }
+            
+            const xValue = parseFloat(document.getElementById('x-input').value);
+            
+            if (!isNaN(xValue)) {
+                const prediction = model.predict(tf.tensor2d([xValue], [1, 1]));
+                const predictedValue = prediction.dataSync()[0];
+                
+                document.getElementById('result').innerText = 
+                    `El resultado de predecir para ${xValue} es: ${predictedValue}`;
+            } else {
+                document.getElementById('result').innerText = 
+                    "Por favor, ingresa un número válido.";
+            }
+        }
+
+        document.getElementById('train-btn').addEventListener('click', entrenarModelo);
+        document.getElementById('predict-btn').addEventListener('click', predecir);
+        entrenarModelo();
+    </script>
+</body>
+</html>
