@@ -11,7 +11,7 @@ git clone https://github.com/Gabicrdz/Modelo-Secuencial-Simple
 Modelo-Secuencial-Simple/
 │
 ├── index.html         # Interfaz web básica
-├── script.js          # Lógica del modelo y entrenamiento
+├── index.css          # Estilos de la pagina web
 └── README.md          # Documentación del proyecto
 
 ```
